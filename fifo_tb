@@ -1,11 +1,12 @@
 `timescale 1ns / 1ps
+`include "fifo.v"
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
 // 
-// Create Date: 10/23/2019 10:39:21 AM
+// Create Date: 10/23/2019 11:23:39 AM
 // Design Name: 
-// Module Name: exp_tb
+// Module Name: fifo_tb
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,15 +21,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module exp_tb;
-
+module fifo_tb;
 reg clk, rst, rd, wr;
-reg [3:0] w_addr, r_addr;
-
-wire full, empty;
 wire [3:0] w_addr, r_addr;
 
-exp g1(.clk(clk), .reset(rst), .wr(wr), .rd(rd), .full(full), .empty(empty), .w_addr(w_addr), .r_addr(r_addr));
+wire full, empty;
+
+initial
+        $vcdpluson;
+
+initial
+       $monitor($time, " rst = %b rd = %b wr = %b w_addr = %b r_addr = %b",  rst, wr, rd, w_addr, r_addr);
+
+
+fifo g1(.clk(clk), .reset(rst), .wr(wr), .rd(rd), .full(full), .empty(empty), .w_addr(w_addr), .r_addr(r_addr));
 
 initial clk = 0;
 always #10 clk = ~clk;
@@ -36,11 +42,29 @@ always #10 clk = ~clk;
 initial begin
     #10 rst = 1;
     #10 rst = 0;
-    #5 wr = 1; rd = 0; full = 0; empty = 1;
-       w_addr <= 2'b01;
-    #20 wr = 0; rd = 1; full = 1; empty = 0;
-       r_addr <= w_addr;
-      #200 $stop;
+        wr = 1; 
+        rd = 0; 
+
+    #50 wr = 0; 
+        rd = 1; 
+
+    #30  
+        rd = 0; 
+
+    #10 wr = 1; 
+        rd = 1; 
+
+    #20 wr = 0; 
+        rd = 1; 
+
+    #10 wr = 1; 
+        rd = 1; 
+
+
+
+       
+      #200 $finish;
 end       
     
+
 endmodule
