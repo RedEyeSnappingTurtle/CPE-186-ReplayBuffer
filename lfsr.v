@@ -12,7 +12,7 @@ always@(posedge clk, negedge rst)
 begin
 	if(rst)
 	begin
-		d <= 4'hFF;
+		d <= 4'hFFFF;
 	end
 	else if(we) 
 		d <= data;
